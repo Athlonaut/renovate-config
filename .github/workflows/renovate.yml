@@ -1,0 +1,53 @@
+name: Renovate
+
+# Self-hosted Renovate: runs across the Athlonaut apps on a schedule so nothing
+# depends on a third-party app's terms for private repositories.
+#
+# RENOVATE_TOKEN must be a fine-grained PAT scoped to the Athlonaut org with,
+# on the target repos: Contents read/write, Pull requests read/write, Issues
+# read/write (dependency dashboard), and org Metadata read. Add Workflows
+# read/write only if Renovate should update files under .github/workflows.
+
+on:
+  schedule:
+    # Monday 05:30 UTC. The preset also schedules updates for before 6am Monday,
+    # so this fires shortly before that window opens.
+    - cron: "30 5 * * 1"
+  workflow_dispatch:
+    inputs:
+      log-level:
+        description: "Renovate log level"
+        required: false
+        default: "info"
+        type: choice
+        options: [info, debug]
+      dry-run:
+        description: "Run without creating pull requests"
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: renovate
+  cancel-in-progress: false
+
+jobs:
+  renovate:
+    name: Renovate
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: renovatebot/github-action@v43.0.19
+        env:
+          # Which repos to run against. Add new apps here.
+          RENOVATE_REPOSITORIES: Athlonaut/bibbit,Athlonaut/oncourse
+          RENOVATE_ONBOARDING: "false"
+          RENOVATE_REQUIRE_CONFIG: "required"
+          RENOVATE_PLATFORM: github
+          LOG_LEVEL: ${{ inputs.log-level || 'info' }}
+          RENOVATE_DRY_RUN: ${{ inputs.dry-run && 'full' || '' }}
+        with:
+          token: ${{ secrets.RENOVATE_TOKEN }}

@@ -1,0 +1,84 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Shared Renovate policy for Athlonaut apps. Extend with { \"extends\": [\"github>Athlonaut/renovate-config\"] }.",
+
+  "extends": ["config:recommended", ":dependencyDashboard", ":semanticCommits"],
+
+  "baseBranchPatterns": ["dev"],
+
+  "rangeStrategy": "bump",
+  "timezone": "Europe/London",
+  "schedule": ["before 6am on monday"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 0,
+
+  "labels": ["dependencies"],
+  "commitMessagePrefix": "chore(deps):",
+
+  "minimumReleaseAge": "3 days",
+
+  "packageRules": [
+    {
+      "description": "Group all non-major production updates into one pull request.",
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "production",
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Group all non-major dev updates into one pull request.",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "development",
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Group GitHub Actions, including majors — these are small and easy to read.",
+      "matchManagers": ["github-actions"],
+      "groupName": "actions",
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Majors are never automerged. The framework stack breaks on majors and each needs reading.",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Keep the framework stack together so its pieces move as a set.",
+      "matchPackageNames": [
+        "next",
+        "react",
+        "react-dom",
+        "@types/react",
+        "@types/react-dom"
+      ],
+      "groupName": "next+react"
+    },
+    {
+      "description": "Clerk ships auth changes across several packages at once.",
+      "matchPackageNames": ["/^@clerk//"],
+      "groupName": "clerk"
+    },
+    {
+      "description": "Prisma's client and CLI must move together or generate breaks.",
+      "matchPackageNames": ["prisma", "@prisma/client", "/^@prisma//"],
+      "groupName": "prisma"
+    }
+  ],
+
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "schedule": ["at any time"],
+    "minimumReleaseAge": null,
+    "labels": ["security"]
+  },
+
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on the first day of the month"]
+  }
+}
