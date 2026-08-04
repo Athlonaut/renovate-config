@@ -29,17 +29,17 @@ Saved as `renovate.json` in the app's root.
 
 ## Running it
 
-Renovate needs to actually run somewhere. Two options:
+The **Mend-hosted Renovate app** is installed on the Athlonaut org and runs it.
+No token or scheduled workflow is needed — the app authenticates as itself.
 
-**Self-hosted (free, no third-party terms):** `.github/workflows/renovate.yml`
-in this repo runs it on a schedule across the org. It needs a `RENOVATE_TOKEN`
-secret — a fine-grained PAT with, on the target repos: `Contents: read & write`,
-`Pull requests: read & write`, `Issues: read & write` (for the dashboard),
-`Workflows: read & write` (only if it should update `.github/workflows`), and
-organization `Metadata: read`.
+A self-hosted workflow lived here previously as a fallback. It was removed when
+the app was installed: running both would mean two Renovates opening duplicate
+pull requests on the same branches. If you ever switch back to self-hosting,
+recover it from git history and add a `RENOVATE_TOKEN` secret.
 
-**Mend-hosted app:** install from the GitHub Marketplace. Check its current terms
-for private repositories before relying on it — that has not been verified here.
+**This repo is public** so the app (and Renovate's preset resolution) can read
+`github>Athlonaut/renovate-config` without extra access grants. It holds only
+dependency policy — no secrets. Keep it that way.
 
 ## Migrating an app off Dependabot
 
