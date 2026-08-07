@@ -9,3 +9,8 @@
 .env
 .env*.local
 *.pem
+
+# Agent tooling: project config is shared, per-machine state is not.
+.claude/settings.local.json
+.serena/cache/
+.serena/project.local.yml
