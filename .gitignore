@@ -1,0 +1,11 @@
+# OS and editor artifacts. Also covered by a machine-level excludesFile for
+# most of us, but kept here so the repo does not depend on local config.
+.DS_Store
+._*
+.idea/
+*.swp
+
+# secrets — nothing here should ever hold credentials, this is a backstop
+.env
+.env*.local
+*.pem
