@@ -12,6 +12,11 @@
   "prConcurrentLimit": 5,
   "prHourlyLimit": 0,
 
+  "platformAutomerge": false,
+  "automergeSchedule": ["at any time"],
+
+  "transitiveRemediation": true,
+
   "labels": ["dependencies"],
   "commitMessagePrefix": "chore(deps):",
 
