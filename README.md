@@ -19,7 +19,7 @@ Saved as `renovate.json` in the app's root.
 | Non-major grouped into `production` / `development` | One pull request a week for routine bumps instead of a dozen. |
 | Non-major **automerged** | CI is the gate. Majors always wait for a human. |
 | Renovate merges its own pull requests (`platformAutomerge: false`) | GitHub's auto-merge cannot be enabled on a pull request that is already mergeable, and `dev` carries no required status checks — so platform auto-merge silently never completed and green pull requests sat open for a week. Renovate merging through the API works regardless of branch protection. |
-| `transitiveRemediation` | A vulnerability that exists only in the lockfile — a transitive dependency pinned below the patched version — otherwise gets no pull request at all, because the declared range already allows the fix. This is what left a high-severity `nanoid` advisory open across five repos while Dependabot, the only thing attempting it, failed with `security_update_not_possible`. |
+| No `transitiveRemediation` | See below — it took the whole fleet offline. |
 | Majors need dashboard approval | The Next/Clerk/Prisma stack breaks on majors; each deserves reading. |
 | `next` + `react` + types grouped | They move as a set; splitting them produces unbuildable intermediate states. |
 | `@clerk/*` grouped | Clerk ships auth changes across several packages at once. |
@@ -28,6 +28,24 @@ Saved as `renovate.json` in the app's root.
 | Security alerts bypass schedule and release-age | A fix you're waiting on shouldn't sit until Monday. |
 | Weekly, Monday before 6am | Updates are waiting when the week starts, not landing mid-flow. |
 | Dependency Dashboard | One issue listing everything pending, instead of triaging pull requests. |
+
+## Don't re-add `transitiveRemediation`
+
+It was added 2026-08-10 and every hosted run after it died with
+`kernel-out-of-memory`. No repo got a Renovate run for the following week — no
+dependency dashboard was updated, no branch was pushed, and six high-severity
+advisories (including the `nanoid` one it was added to catch) sat untouched
+until someone went looking. A dead Renovate is worse than the gap it closes.
+
+The option makes Renovate resolve full dependency trees to find fixes that exist
+only in the lockfile. On the hosted app's memory ceiling, the large lockfiles
+here don't fit — and because this preset is shared, one setting took down every
+repo at once rather than the one that overflowed.
+
+The lockfile-only gap is real, and is covered instead by version-scoped
+`overrides` in each app's `pnpm-workspace.yaml`. If you want the option back,
+scope it to one repo's own `renovate.json` first and confirm that repo still
+gets a run — do not put it back in this preset on the strength of the docs.
 
 ## Running it
 
