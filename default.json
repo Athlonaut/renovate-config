@@ -15,8 +15,6 @@
   "platformAutomerge": false,
   "automergeSchedule": ["at any time"],
 
-  "transitiveRemediation": true,
-
   "labels": ["dependencies"],
   "commitMessagePrefix": "chore(deps):",
 
