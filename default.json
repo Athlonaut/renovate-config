@@ -15,7 +15,7 @@
   "labels": ["dependencies"],
   "commitMessagePrefix": "chore(deps):",
 
-  "minimumReleaseAge": "3 days",
+  "minimumReleaseAge": "1 day",
 
   "packageRules": [
     {
