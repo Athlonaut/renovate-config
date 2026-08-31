@@ -24,7 +24,7 @@ Saved as `renovate.json` in the app's root.
 | `next` + `react` + types grouped | They move as a set; splitting them produces unbuildable intermediate states. |
 | `@clerk/*` grouped | Clerk ships auth changes across several packages at once. |
 | `prisma` + `@prisma/*` grouped | Client and CLI must match or `generate` breaks. |
-| `minimumReleaseAge: 3 days` | Catches bad publishes before they reach you. |
+| `minimumReleaseAge: 1 day` | Catches bad publishes before they reach you. Was 3 days, which quarantined security patches too: every exclusion it accumulated was a fix we wanted, and it is what silently held `nanoid` at 3.3.17. One day is pnpm's own default. |
 | Security alerts bypass schedule and release-age | A fix you're waiting on shouldn't sit until Monday. |
 | Weekly, Monday before 6am | Updates are waiting when the week starts, not landing mid-flow. |
 | Dependency Dashboard | One issue listing everything pending, instead of triaging pull requests. |
