@@ -78,7 +78,11 @@ Two rulesets enforce it, matching the product repos:
 | `main via dev only` | `main` | Pull request required, no deletion or force-push, and two checks must pass |
 
 The checks are `Source branch must be dev` (from `branch-policy.yml`) and
-`Lint & Test` (from `ci.yml`, which runs `renovate-config-validator`). Renaming
+`Lint & Test` (from `ci.yml`, which runs `renovate-config-validator`). The apps
+get the first from `Athlonaut/.github/actions/require-dev-source`; this repo
+inlines the same four lines instead, because that action lives in a private repo
+and a public repo cannot resolve it — it fails as "not found", not as a
+permissions error. Renaming
 either job locks `main` until the ruleset is updated to match. Validation earns
 its place here because a malformed `default.json` breaks Renovate in every repo
 at once, with no pull request anywhere to revert.
