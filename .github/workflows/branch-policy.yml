@@ -1,0 +1,33 @@
+name: Branch policy
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  source-branch:
+    # Same job name as the apps, because the org ruleset requires the exact
+    # context "Source branch must be dev".
+    name: Source branch must be dev
+    runs-on: ubuntu-latest
+
+    steps:
+      # The apps call Athlonaut/.github/actions/require-dev-source, which this
+      # repo cannot: that repo is private and this one is public, so the action
+      # resolves as "not found" rather than as a permissions error. Inlined
+      # instead — the logic is four lines and the check name is what the ruleset
+      # matches on.
+      - name: Verify the pull request comes from dev
+        # head_ref goes through env, not string interpolation: a branch name is
+        # attacker-controlled and would otherwise be run as shell.
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ "$HEAD_REF" != "dev" ]; then
+            echo "::error::Pull requests into main must come from 'dev' (this one is from '$HEAD_REF'). Merge your work into dev, then open a dev -> main pull request."
+            exit 1
+          fi
+          echo "Source branch is dev."
