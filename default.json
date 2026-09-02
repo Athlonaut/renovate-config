@@ -51,6 +51,12 @@
       "dependencyDashboardApproval": true
     },
     {
+      "description": "eslint majors are held back by eslint-config-next, not by us. The config declares eslint >=9 as its peer, so Renovate offers v10, but the plugins it depends on — eslint-plugin-react, eslint-plugin-import, eslint-plugin-jsx-a11y — all cap at ^9, and their newest releases still do. Nothing sets strict-peer-dependencies, so pnpm installs the mismatch with a warning and lint breaks afterwards rather than the install failing. Blocked outright rather than left pending approval, so the dashboard's 'create all pending approval PRs at once' button cannot sweep it up. Re-enable when eslint-config-next ships a plugin set with ^10 peers.",
+      "matchPackageNames": ["eslint", "@eslint/js"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
       "description": "Keep the framework stack together so its pieces move as a set.",
       "matchPackageNames": [
         "next",

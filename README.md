@@ -21,6 +21,7 @@ Saved as `renovate.json` in the app's root.
 | Renovate merges its own pull requests (`platformAutomerge: false`) | GitHub's auto-merge cannot be enabled on a pull request that is already mergeable, and `dev` carries no required status checks — so platform auto-merge silently never completed and green pull requests sat open for a week. Renovate merging through the API works regardless of branch protection. |
 | No `transitiveRemediation` | See below — it took the whole fleet offline. |
 | Majors need dashboard approval | The Next/Clerk/Prisma stack breaks on majors; each deserves reading. |
+| `eslint` majors blocked outright | `eslint-config-next` declares `eslint >=9` as its peer, but the plugins it pulls in (`eslint-plugin-react`, `eslint-plugin-import`, `eslint-plugin-jsx-a11y`) cap at `^9` and their newest releases still do. Nothing sets `strict-peer-dependencies`, so pnpm installs v10 with a warning and lint breaks afterwards. Blocked rather than left pending so the dashboard's approve-all button can't sweep it up. |
 | `next` + `react` + types grouped | They move as a set; splitting them produces unbuildable intermediate states. |
 | `@clerk/*` grouped | Clerk ships auth changes across several packages at once. |
 | `prisma` + `@prisma/*` grouped | Client and CLI must match or `generate` breaks. |
