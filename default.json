@@ -57,6 +57,12 @@
       "enabled": false
     },
     {
+      "description": "pnpm overrides pin a security floor for a transitive dependency, not a version to track. Raising one to a new major forces an incompatible API on whichever package pinned the old line, breaking a dependency that was never ours to upgrade. In-range updates still flow, so the floor keeps rising as advisories are fixed. Matched on the file rather than a depType because every override lives in pnpm-workspace.yaml and nothing else there needs majors held.",
+      "matchFileNames": ["pnpm-workspace.yaml"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
       "description": "Keep the framework stack together so its pieces move as a set.",
       "matchPackageNames": [
         "next",

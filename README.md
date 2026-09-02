@@ -27,6 +27,7 @@ Saved as `renovate.json` in the app's root.
 | `prisma` + `@prisma/*` grouped | Client and CLI must match or `generate` breaks. |
 | `minimumReleaseAge: 1 day` | Catches bad publishes before they reach you. Was 3 days, which quarantined security patches too: every exclusion it accumulated was a fix we wanted, and it is what silently held `nanoid` at 3.3.17. One day is pnpm's own default. |
 | Lock file maintenance exempt from release age | A lockfile refresh touches hundreds of packages, so one of them is always younger than a day and `renovate/stability-days` never goes green — the monthly pull request sat unmergeable instead of quarantining anything useful. CI is the gate that matters for a bulk refresh. |
+| Majors blocked in `pnpm-workspace.yaml` | Overrides pin a security floor for a transitive dependency, not a version to track. A major forces an incompatible API on whichever package pinned the old line. In-range updates still flow. |
 | Security alerts bypass schedule and release-age | A fix you're waiting on shouldn't sit until Monday. |
 | Weekly, Monday before 6am | Updates are waiting when the week starts, not landing mid-flow. |
 | Dependency Dashboard | One issue listing everything pending, instead of triaging pull requests. |
