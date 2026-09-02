@@ -1,0 +1,22 @@
+name: Branch policy
+
+# main advances only by merging dev, so every change is exercised on dev first.
+# Branch rulesets can require a status check but can't inspect a pull request's
+# source branch, so this workflow supplies that check.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  source-branch:
+    # Required check in the Athlonaut org branch ruleset — renaming this job
+    # locks main until the ruleset is updated to match.
+    name: Source branch must be dev
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: Athlonaut/.github/actions/require-dev-source@v1.0.0

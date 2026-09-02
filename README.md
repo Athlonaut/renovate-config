@@ -64,6 +64,25 @@ recover it from git history and add a `RENOVATE_TOKEN` secret.
 `github>Athlonaut/renovate-config` without extra access grants. It holds only
 dependency policy — no secrets. Keep it that way.
 
+## Changing the preset
+
+Same flow as the apps: branch off `dev`, open a pull request into `dev`, then
+promote `dev` into `main`. Consumers resolve the preset from `main`, so nothing
+takes effect fleet-wide until that second merge.
+
+Two rulesets enforce it, matching the product repos:
+
+| Ruleset | Branch | What it does |
+| ------- | ------ | ------------ |
+| `dev stays` | `dev` | No deletion, no force-push. Without it, auto-delete-on-merge removes `dev` every time a promotion merges — which is exactly what happened on 2026-09-02 |
+| `main via dev only` | `main` | Pull request required, no deletion or force-push, and two checks must pass |
+
+The checks are `Source branch must be dev` (from `branch-policy.yml`) and
+`Lint & Test` (from `ci.yml`, which runs `renovate-config-validator`). Renaming
+either job locks `main` until the ruleset is updated to match. Validation earns
+its place here because a malformed `default.json` breaks Renovate in every repo
+at once, with no pull request anywhere to revert.
+
 ## Migrating an app off Dependabot
 
 1. Add `renovate.json` with the extends line above.
