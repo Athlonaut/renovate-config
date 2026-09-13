@@ -27,9 +27,10 @@ Saved as `renovate.json` in the app's root.
 | `prisma` + `@prisma/*` grouped | Client and CLI must match or `generate` breaks. |
 | `minimumReleaseAge: 1 day` | Catches bad publishes before they reach you. Was 3 days, which quarantined security patches too: every exclusion it accumulated was a fix we wanted, and it is what silently held `nanoid` at 3.3.17. One day is pnpm's own default. |
 | Lock file maintenance exempt from release age | A lockfile refresh touches hundreds of packages, so one of them is always younger than a day and `renovate/stability-days` never goes green — the monthly pull request sat unmergeable instead of quarantining anything useful. CI is the gate that matters for a bulk refresh. |
+| Lock file maintenance on the **first Sunday**, same 2–6am window, **automerged** | Cron `* 2-6 1-7 * 0` — days 1–7 that are also a Sunday is the first Sunday, so the monthly refresh lands on a review day rather than up to six days before one. Automerge is gated on the branch's CI and, like every other automerge here, only reaches `dev` (`baseBranchPatterns`), so promotion to production stays a manual `dev`→`main` merge. |
 | Majors blocked in `pnpm-workspace.yaml` | Overrides pin a security floor for a transitive dependency, not a version to track. A major forces an incompatible API on whichever package pinned the old line. In-range updates still flow. |
-| Security alerts bypass schedule and release-age | A fix you're waiting on shouldn't sit until Monday. |
-| Weekly, Monday before 6am | Updates are waiting when the week starts, not landing mid-flow. |
+| Security alerts bypass schedule and release-age | A fix you're waiting on shouldn't sit until the weekly window. |
+| Weekly, **Sunday 2–6am** (cron `* 2-6 * * 0`) | Aligned with the automated weekly security review, which runs Sunday morning America/Phoenix. The window closes before the review starts, so everything Renovate opens is already on the Dependency Dashboards and in the PR lists when the review runs. It is deliberately ~5 hours wide, not one: the Mend-hosted app visits on its own cadence and Renovate skips any window narrower than the 3–4 hours its docs recommend, so a tight window can be missed entirely. Cron is used because Later text syntax is deprecated, and the minute field must be `*` — Renovate has no minute granularity. |
 | Dependency Dashboard | One issue listing everything pending, instead of triaging pull requests. |
 
 ## Don't re-add `transitiveRemediation`
