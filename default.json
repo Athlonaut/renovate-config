@@ -9,7 +9,7 @@
   "rangeStrategy": "bump",
   "timezone": "America/Phoenix",
   "schedule": ["* 2-6 * * 0"],
-  "prConcurrentLimit": 5,
+  "prConcurrentLimit": 10,
   "prHourlyLimit": 0,
 
   "platformAutomerge": false,
