@@ -12,6 +12,8 @@
   "prConcurrentLimit": 10,
   "prHourlyLimit": 0,
 
+  "rebaseWhen": "conflicted",
+
   "platformAutomerge": false,
   "automergeSchedule": ["at any time"],
 
@@ -71,6 +73,7 @@
       "description": "Override floors in pnpm-workspace.yaml are a one-line version bump covered by the full CI run, and they sat open for weeks in every repo waiting for a human (seven open PRs per repo on 2026-10-14). Automerge the non-major ones like the production and development groups; majors stay disabled by the rule above. Matching the file also lets the next+react group automerge, since its branch carries the next@<x override line and a group only automerges when every update in it may.",
       "matchFileNames": ["pnpm-workspace.yaml"],
       "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "overrides",
       "automerge": true,
       "automergeType": "pr"
     },
