@@ -16,7 +16,7 @@ Saved as `renovate.json` in the app's root.
 | Behaviour | Why |
 |---|---|
 | Pull requests target **`dev`** | The org ruleset rejects any pull request into `main` whose head isn't `dev`. Targeting `main` would make every update unmergeable — the exact breakage Dependabot hit. |
-| Non-major grouped into `production` / `development` | One pull request a week for routine bumps instead of a dozen. |
+| All routine non-major updates grouped into **one** `non-major` pull request | Production, dev, GitHub Actions, override floors, Node and pnpm bumps share one weekly pull request. Renovate drove 84% of PR CI minutes in October 2026 (657 runs), and each separate group cost its own CI run plus a re-run on every conflict rebase; one group is one run. `next`+`react`, Clerk and Prisma keep their own groups (below) because they break in ways worth isolating. Majors stay separate, one pull request each, behind dashboard approval. |
 | Non-major **automerged** | CI is the gate. Majors always wait for a human. |
 | Renovate merges its own pull requests (`platformAutomerge: false`) | GitHub's auto-merge cannot be enabled on a pull request that is already mergeable, and `dev` carries no required status checks — so platform auto-merge silently never completed and green pull requests sat open for a week. Renovate merging through the API works regardless of branch protection. |
 | No `transitiveRemediation` | See below — it took the whole fleet offline. |
@@ -34,7 +34,8 @@ Saved as `renovate.json` in the app's root.
 | Security alerts bypass schedule and release-age | A fix you're waiting on shouldn't sit until the weekly window. |
 | Weekly, **Saturday 8pm to Sunday 7am** (cron `* 20-23 * * 6` and `* 0-6 * * 0`) | Aligned with the automated weekly security review, which runs at 7am Sunday America/Phoenix. The window closes before the review starts, so everything Renovate opens is already on the Dependency Dashboards and in the PR lists when the review runs. It was Sunday 2–6am, five hours wide, which Renovate's docs call enough — but the Mend-hosted app visits each repo every few hours on its own clock, and a five-hour window is missed whenever one visit lands just before it opens and the next lands after it closes. That happened fleet-wide on 2026-10-11 (trysyncom's visit at 1:07am, nothing opened all week) and left every weekly review refreshing lock files by hand. Eleven hours spans at least two visits. Cron is used because Later text syntax is deprecated, and the minute field must be `*` — Renovate has no minute granularity. |
 | Rebase only on conflict (`rebaseWhen: "conflicted"`) | The default rebases every open pull request each time `dev` moves, and every rebase re-runs CI. This was about a third of the org's Actions minutes. |
-| `pnpm-workspace.yaml` overrides grouped | One pull request per run instead of one per override line, each with its own CI run. `next`, Clerk and Prisma rules come later and keep their own groups. |
+| `pnpm-workspace.yaml` overrides in the `non-major` group | One pull request per run instead of one per override line, each with its own CI run. The `next@<x` override line still lands in `next+react`, because that rule comes later and wins. |
+| No `updateNotScheduled: false` | It would stop Renovate touching open pull requests outside the weekend window, but the `renovate/stability-days` status is only refreshed when Renovate processes the branch. A group opened on Saturday with a release under a day old would stay pending until the next weekend, and automerge would stall for a week. `rebaseWhen: "conflicted"` already removes the routine re-runs. |
 | Dependency Dashboard | One issue listing everything pending, instead of triaging pull requests. |
 
 ## Don't re-add `transitiveRemediation`
